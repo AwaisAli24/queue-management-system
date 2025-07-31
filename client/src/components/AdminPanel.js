@@ -9,7 +9,6 @@ const AdminPanel = () => {
   const [error, setError] = useState('');
   const [stats, setStats] = useState(null);
 
-  // Fetch queue data
   const fetchQueue = async () => {
     try {
       setLoading(true);
@@ -29,18 +28,16 @@ const AdminPanel = () => {
     }
   };
 
-  // Remove user from queue
   const removeUser = async (userId) => {
     try {
       await axios.delete(`/api/queue/${userId}`);
-      fetchQueue(); // Refresh the queue
+      fetchQueue();
     } catch (err) {
       setError('Failed to remove user from queue');
       console.error('Error removing user:', err);
     }
   };
 
-  // Auto-refresh queue every 30 seconds
   useEffect(() => {
     fetchQueue();
     
@@ -83,7 +80,6 @@ const AdminPanel = () => {
 
         {error && <div className="error">{error}</div>}
 
-        {/* Queue Statistics */}
         {stats && (
           <div className="stats-grid">
             <div className="stat-card">
@@ -105,7 +101,6 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Service Type Breakdown */}
         {stats?.serviceTypeStats && stats.serviceTypeStats.length > 0 && (
           <div className="card">
             <h3>Service Type Breakdown</h3>
@@ -120,10 +115,8 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Wait Time Prediction */}
         <WaitTimePrediction queueLength={users.length} />
 
-        {/* Queue List */}
         <div className="queue-section">
           <h3>Current Queue ({users.length} people)</h3>
           

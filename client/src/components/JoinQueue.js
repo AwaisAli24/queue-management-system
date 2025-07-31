@@ -44,7 +44,6 @@ const JoinQueue = () => {
         text: `Successfully joined queue! Your position will be shown in the admin panel.` 
       });
       
-      // Reset form
       setFormData({
         name: '',
         serviceType: 'consultation'

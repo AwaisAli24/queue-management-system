@@ -4,7 +4,7 @@ import AdminPanel from './components/AdminPanel';
 import './App.css';
 
 function App() {
-  const [currentView, setCurrentView] = useState('join'); // 'join' or 'admin'
+  const [currentView, setCurrentView] = useState('join');
 
   return (
     <div className="App">

@@ -24,7 +24,6 @@ const WaitTimePrediction = ({ queueLength }) => {
     }
   };
 
-  // Auto-fetch prediction when queue length changes
   useEffect(() => {
     if (queueLength > 0) {
       fetchPrediction();

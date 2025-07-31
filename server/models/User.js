@@ -19,18 +19,15 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true // Adds createdAt and updatedAt fields
+  timestamps: true
 });
 
-// Index for efficient querying by joinTime
 userSchema.index({ joinTime: 1 });
 
-// Virtual for calculating wait time
 userSchema.virtual('waitTime').get(function() {
   return Date.now() - this.joinTime.getTime();
 });
 
-// Ensure virtual fields are serialized
 userSchema.set('toJSON', { virtuals: true });
 userSchema.set('toObject', { virtuals: true });
 

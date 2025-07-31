@@ -2,20 +2,16 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// Simple prediction algorithm
 const calculatePredictedWaitTime = (queueLength, timeOfDay, serviceType) => {
-  // Base time per person (in minutes)
   const baseTimePerPerson = 5;
   
-  // Time of day multiplier (rush hours)
   const hour = new Date().getHours();
   let timeMultiplier = 1;
   
-  if (hour >= 9 && hour <= 11) timeMultiplier = 1.5; // Morning rush
-  else if (hour >= 14 && hour <= 16) timeMultiplier = 1.3; // Afternoon rush
-  else if (hour >= 17 && hour <= 19) timeMultiplier = 1.8; // Evening rush
+  if (hour >= 9 && hour <= 11) timeMultiplier = 1.5;
+  else if (hour >= 14 && hour <= 16) timeMultiplier = 1.3;
+  else if (hour >= 17 && hour <= 19) timeMultiplier = 1.8;
   
-  // Service type multiplier
   const serviceMultipliers = {
     'consultation': 1.5,
     'payment': 0.8,
@@ -26,39 +22,30 @@ const calculatePredictedWaitTime = (queueLength, timeOfDay, serviceType) => {
   
   const serviceMultiplier = serviceMultipliers[serviceType] || 1.0;
   
-  // Calculate predicted wait time in minutes
   const predictedMinutes = queueLength * baseTimePerPerson * timeMultiplier * serviceMultiplier;
   
   return Math.round(predictedMinutes);
 };
 
-// @desc    Predict wait time based on queue information
-// @route   POST /api/predict
-// @access  Public
 const predictWaitTime = async (req, res, next) => {
   try {
     const { queueLength, timeOfDay, serviceType } = req.body;
     
-    // If queueLength is not provided, get current queue length
     let currentQueueLength = queueLength;
     if (!currentQueueLength) {
       currentQueueLength = await User.countDocuments();
     }
     
-    // Use current time if not provided
     const currentTime = timeOfDay || new Date();
     
-    // Use 'other' as default service type
     const currentServiceType = serviceType || 'other';
     
-    // Calculate predicted wait time
     const predictedWaitTime = calculatePredictedWaitTime(
       currentQueueLength,
       currentTime,
       currentServiceType
     );
     
-    // Get additional queue statistics
     const queueStats = await User.aggregate([
       {
         $group: {
@@ -68,7 +55,6 @@ const predictWaitTime = async (req, res, next) => {
       }
     ]);
     
-    // Calculate average wait time for users currently in queue
     const averageWaitTime = await User.aggregate([
       {
         $addFields: {
@@ -113,9 +99,6 @@ const predictWaitTime = async (req, res, next) => {
   }
 };
 
-// @desc    Get prediction factors and algorithm info
-// @route   GET /api/predict/info
-// @access  Public
 const getPredictionInfo = async (req, res, next) => {
   try {
     res.status(200).json({

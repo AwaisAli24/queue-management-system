@@ -2,14 +2,10 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// @desc    Add a new user to the queue
-// @route   POST /api/queue
-// @access  Public
 const addToQueue = async (req, res, next) => {
   try {
     const { name, serviceType } = req.body;
 
-    // Validate required fields
     if (!name) {
       return res.status(400).json({
         success: false,
@@ -33,13 +29,10 @@ const addToQueue = async (req, res, next) => {
   }
 };
 
-// @desc    Get all users in queue (sorted by joinTime)
-// @route   GET /api/queue
-// @access  Public
 const getQueue = async (req, res, next) => {
   try {
     const users = await User.find()
-      .sort({ joinTime: 1 }) // Sort by joinTime ascending (oldest first)
+      .sort({ joinTime: 1 })
       .select('-__v');
 
     res.status(200).json({
@@ -52,9 +45,6 @@ const getQueue = async (req, res, next) => {
   }
 };
 
-// @desc    Remove a user from the queue
-// @route   DELETE /api/queue/:id
-// @access  Public
 const removeFromQueue = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -76,9 +66,6 @@ const removeFromQueue = async (req, res, next) => {
   }
 };
 
-// @desc    Get queue statistics
-// @route   GET /api/queue/stats
-// @access  Public
 const getQueueStats = async (req, res, next) => {
   try {
     const totalUsers = await User.countDocuments();
